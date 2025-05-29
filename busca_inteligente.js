@@ -46,16 +46,16 @@ function coletarItem(vetorBusca, locaisPalavras, indiceItem) {
     return resultados;
 }
 
-function separarStrings(arrayDeStrings,separador) {
+function separarStrings(arrayDeStrings, separador) {
     return arrayDeStrings.map(str => str.split(separador)); // Divide cada string pelo separador
 }
 
 function coletarArrays(vetorBusca, locaisArrays, indiceArrays) {
     // Usa coletarItem para obter os dados do índice especificado
     let dadosExtraidos = coletarItem(vetorBusca, locaisArrays, indiceArrays);
-    
+
     // Explode as strings usando transformarEmArray para obter um array de arrays
-    return separarStrings(dadosExtraidos,",");
+    return separarStrings(dadosExtraidos, ",");
 }
 
 function rankear(arr) {
@@ -119,13 +119,13 @@ function mergeSortedArrays(arr1, arr2, pontos1, pontos2) {
     let pontos = [];
 
     while (i < arr1.length && j < arr2.length) {
-        if (arr1[i] < arr2[j]) {
+        if (Number(arr1[i]) < Number(arr2[j])) {
             result.push(arr1[i]);
-            pontos.push(Number(pontos1[i])+0);
+            pontos.push(Number(pontos1[i]) + 0);
             i++;
-        } else if (arr1[i] > arr2[j]) {
+        } else if (Number(arr1[i]) > Number(arr2[j])) {
             result.push(arr2[j]);
-            pontos.push(Number(pontos2[j])+0);
+            pontos.push(Number(pontos2[j]) + 0);
             j++;
         } else {
             // Se os itens forem iguais, soma os pontos e adiciona apenas uma vez
@@ -139,14 +139,14 @@ function mergeSortedArrays(arr1, arr2, pontos1, pontos2) {
     // Adiciona os itens restantes do primeiro array, se houver
     while (i < arr1.length) {
         result.push(arr1[i]);
-        pontos.push(Number(pontos1[i])+0);
+        pontos.push(Number(pontos1[i]) + 0);
         i++;
     }
 
     // Adiciona os itens restantes do segundo array, se houver
     while (j < arr2.length) {
         result.push(arr2[j]);
-        pontos.push(Number(pontos2[j])+0);
+        pontos.push(Number(pontos2[j]) + 0);
         j++;
     }
 
@@ -176,14 +176,117 @@ function ordenarPorPontuacao(arraySkus, arrayPontos) {
 
     // Organiza Skus e pontos com base no ranking
     let skusOrganizado = organizaRanking(arraySkus, rankPontos);
-  
+
     let pontosOrganizado = organizaRanking(pontosNumericos, rankPontos);
 
     return [skusOrganizado, pontosOrganizado];
 }
 
+function palavrasCoincidentes(busca, lista) {
+    const indices = [];
 
-function encontraResultados(BuscaUsuario, vetorPalavras) {
+    lista.forEach((item, index) => {
+        if (busca.includes(item)) {
+            indices.push(index);
+        }
+    });
+
+    return indices;
+}
+
+function escolheTitulo(pesquisa, palavras, mapa, titulos, anos) {
+    let ps = pesquisa.split(" "); // Palavras pesquisadas
+    let pl = palavras.split(","); // Palavras presentes no SKU
+    let mp = mapa.split(","); // Índices dos títulos
+    let tt = titulos.split(","); // Índices das palavras nos títulos
+    let an = anos.split(","); // Faixa de anos
+
+    let encontradas = palavrasCoincidentes(ps, pl); // Identifica as palavras coincidentes
+    let pontos = new Array(tt.length).fill(0); // Inicializa pontuações
+    encontradas.forEach(palavra => {
+        let lugarespalavra = mp[palavra].split(" "); // Locais das palavras coincidentes
+        lugarespalavra.forEach(j => {
+            pontos[j] += 1 + 1 / (tt[j].split(" ").length + 1); // Adiciona pontos aos títulos
+        });
+    });
+
+    // Adicionando pontuação extra se um ano específico estiver na pesquisa
+    // Encontrar o ano na entrada
+    let ano = ps.find(p => {
+        let num = Number(p);
+        if (num >= 1900 && num <= 2024) return true; // Ano explícito
+        if (num >= 1 && num <= 35) return num + 2000; // De 01 a 35 => Soma 2000
+        if (num >= 36 && num <= 99) return num + 1900; // De 36 a 99 => Soma 1900
+        return false;
+    });
+
+    // Se um ano válido foi encontrado, ajustar pontuação
+    if (ano) {
+        pontos.forEach((_, i) => {
+            let faixa = an[i].split(" ");
+            if (Number(ano) >= Number(faixa[0]) && Number(ano) <= Number(faixa[1])) {
+                pontos[i] += 1;
+            }
+        });
+    }
+
+    let vencedor = pontos.indexOf(Math.max(...pontos)); // Encontra o título com maior pontuação
+    let vencsep = tt[vencedor].split(" "); // Explode o título vencedor
+    let escolhido = vencsep.map(i => pl[i]).join(" ") + ` ${an[vencedor].split(" ").join(" a ")}`;
+
+    let pontosExtras = (pontos[vencedor] * 36) / (ps.length + 1); // Ajuste de pontuação global
+
+    return [escolhido, pontosExtras];
+}
+function capitalizeText(text) {
+    const exceptions = ["para", "a", "o", "e", "com", "sem", "da", "de", "do"];
+    return text
+        .toLowerCase()
+        .split(" ")
+        .map((word, index) => {
+            return exceptions.includes(word) && index !== 0
+                ? word
+                : word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(" ");
+}
+function completaTitulos(result, vetorSKUs, buscaUsuario) {
+
+    let titulosCompletos = [];
+    let pontuacoesAtuais = [];
+    let skus = []
+
+    let limiteResultados = Math.min(100, result[0].length); // Limita a quantidade de resultados
+    let pontosExtras = 0;
+    for (let i = 0; i < limiteResultados; i++) {
+        let resultadinho = vetorSKUs[result[0][i]].split(";")
+        let peca = resultadinho[1]; // Segunda coluna do vetorSKUs
+        let palavras = resultadinho[2] || ""; // Terceira coluna (quando existe)
+        titulosCompletos[i] = peca;
+        pontosExtras = 0;
+        if (palavras !== "") {
+            let mapa = resultadinho[3]; // Quarta coluna
+            let titulos = resultadinho[4]; // Quinta coluna
+            let anos = resultadinho[5]; // Sexta coluna
+            pontosExtras = 0;
+            [restoTitulo, pontosExtras] = escolheTitulo(buscaUsuario, palavras, mapa, titulos, anos);
+            titulosCompletos[i] += " " + restoTitulo;
+        }
+        titulosCompletos[i] = capitalizeText(titulosCompletos[i].toLowerCase());
+        skus[i] = resultadinho[0];
+        pontuacoesAtuais[i] = result[1][i] + pontosExtras;
+    }
+    let novoRank = rankear(pontuacoesAtuais);
+
+    titulosCompletos = organizaRanking(titulosCompletos, novoRank);
+    skus = organizaRanking(skus, novoRank);
+    return [skus, titulosCompletos];
+}
+function unirVetores(vetor1, vetor2) {
+    return vetor1.map((item, index) => [item, vetor2[index]]);
+}
+
+function buscaInteligente(BuscaUsuario, vetorPalavras, vetorSKUs) {
     // Passo 1: Encontrar os índices das palavras na busca
     let locaisArrays = buscaPalavras(vetorPalavras, BuscaUsuario);
 
@@ -196,19 +299,10 @@ function encontraResultados(BuscaUsuario, vetorPalavras) {
     // Passo 4: Consolidar os dados mesclando códigos e pontuações
     let resultados = mergeTotal(arraysCodigos, arraysPontuacoes);
 
-    return ordenarPorPontuacao(resultados[0], resultados[1]);
+    // Passo 5: Ordenar por relevância
+    let resultadosOrdenados = ordenarPorPontuacao(resultados[0], resultados[1]);
+    // Passo 6: Completa os titulos com as aplicações
+    let titulosProntos = completaTitulos(resultadosOrdenados, vetorSKUs, BuscaUsuario)
+
+    return unirVetores(titulosProntos[0], titulosProntos[1])
 }
-
-// Exemplo de uso:
-let vetorPalavras = [
-    "apple;fruit;100,25,A1;red;1,10,15",
-    "banana;fruit;B2;yellow;20",
-    "carrot;vegetable;100,25,C3;orange;1,15,3",
-    "grape;fruit;G4;purple;24",
-    "melon;fruit;M5;green;30"
-];
-
-console.log(encontraResultados("carrot apple grape", vetorPalavras)); 
-// Retorna os códigos e pontuações consolidados
-
-//Fazer a seguinte sequencia: buscarPalavras - coletarArrays(indices) - coletarArrays(pontos) - MergeTotal(indices, pontos) - ordenaPor pontuacao
