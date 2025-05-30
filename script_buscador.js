@@ -49,15 +49,16 @@ async function realizarBusca(termo) {
     clearTimeout(tempoEspera);
     tempoEspera = setTimeout(async () => {
         const resultados = await buscaInteligente(termo, vetPalavras, vetSkus);
-        suggestionsDiv.innerHTML = ""; // Limpa a lista antes de adicionar novos resultados
+        const fragment = document.createDocumentFragment(); // Fragmento para evitar múltiplas manipulações no DOM
 
         let k = 0;
 
         for (const [sku, titulo] of resultados) {
-            if (k >= 15) break; // Mantém apenas 20 itens visíveis
+            if (k >= 15) break; // Mantém apenas 15 itens visíveis
 
             const url_imagem = `https://www.virtualautopecas.com.br/image/cache/image/catalog/image_${sku}-0-44x44.png`;
             const existe = await verificarImagem(url_imagem);
+
             if (existe) {
                 k++;
                 const link = document.createElement("a");
@@ -74,23 +75,27 @@ async function realizarBusca(termo) {
 
                 link.appendChild(img);
                 link.appendChild(text);
-                suggestionsDiv.appendChild(link);
+                fragment.appendChild(link); // Adiciona ao fragmento ao invés de modificar o DOM diretamente
             }
         }
 
+        suggestionsDiv.innerHTML = ""; // Remove o conjunto anterior antes de adicionar o novo
+
         if (k > 0) {
+            suggestionsDiv.appendChild(fragment); // Insere todos os elementos de uma vez
             suggestionsDiv.style.display = "block";
 
             const showAll = document.createElement("div");
             showAll.classList.add("show-all");
             showAll.textContent = "Mostrar tudo";
             showAll.onclick = () => buscarTudo();
-            suggestionsDiv.appendChild(showAll);
+            suggestionsDiv.appendChild(showAll); // Adiciona o botão ao fragmento
         } else {
             suggestionsDiv.style.display = "none";
         }
-    }, 300);
+    }, 250);
 }
+
 
 // 🔹 Inicia atualização automática após término da digitação (máx. 3 vezes)
 document.getElementById("searchBox").addEventListener("input", () => {
