@@ -93,3 +93,112 @@
        .show-all:hover {
            background: #0056b3;
        }
+@media (max-width: 768px) {
+
+           /* Esconde o botão de busca */
+           #searchButton {
+               display: none;
+           }
+
+           /* Ajusta o container da busca */
+           #searchContainer {
+               width: 85vw;
+               /* Ocupa quase toda a largura da tela */
+               max-width: 500px;
+               border-radius: 50px;
+               /* Bordas totalmente arredondadas */
+               padding: 2px;
+               /* Redução do espaçamento interno */
+               background-color: #f2f2f2;
+               /* Cinza claro */
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               margin: auto;
+               /* Centraliza na tela */
+               position: relative;
+               /* Garante centralização precisa */
+               box-sizing: border-box;
+               /* Mantém proporções corretas */
+           }
+
+           /* Ícone de lupa dentro do input (agora na direita) */
+           #searchBox {
+               height: 20px;
+               /* Altura reduzida pela metade */
+               width: 100%;
+               padding: 5px 40px 5px 10px;
+               /* Espaço maior à esquerda para digitação */
+               background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat right 10px center;
+               background-size: 16px;
+               /* Ajuste do tamanho da lupa */
+               border-radius: 50px;
+               /* Bordas totalmente arredondadas */
+               text-align: left;
+               /* Texto alinhado à esquerda */
+           }
+
+           /* Barra de sugestões ocupando toda a largura */
+
+           #suggestions {
+               width: 85vw;
+               max-width: 500px;
+               border-radius: 10px;
+               margin: 10px auto;
+               left: 50%;
+               transform: translateX(-50%);
+               overflow-y: auto;
+
+
+               /* Mantém a rolagem ao deslizar */
+               max-height: 60vh;
+               -webkit-overflow-scrolling: touch;
+               /* Suaviza rolagem em mobile */
+
+               /* Esconde a barra de rolagem */
+               scrollbar-width: none;
+               /* Firefox */
+               -ms-overflow-style: none;
+               /* Internet Explorer/Edge */
+           }
+
+           /* Para esconder a barra de rolagem no WebKit (Chrome, Safari) */
+           #suggestions::-webkit-scrollbar {
+               display: none;
+           }
+
+
+           /* Ajuste dos itens de sugestão */
+           .suggestion-item {
+               display: flex;
+               align-items: center;
+               padding: 10px;
+               text-decoration: none;
+               color: black;
+               gap: 15px;
+           }
+
+           .suggestion-item:hover {
+               background: #f0f0f0;
+           }
+
+           /* Ajuste do botão "Ver Todas" */
+           .show-all {
+               text-align: center;
+               padding: 10px;
+               font-family: sans-serif;
+               font-size: 16px;
+               cursor: pointer;
+               background: #00609A;
+               color: white;
+               border-radius: 5px;
+               margin-top: 5px;
+               font-weight: bold;
+           }
+
+           .show-all:hover {
+               color: #00609A;
+               background: #ffffff;
+               border: 2px solid #00609A;
+           }
+       }
