@@ -108,7 +108,7 @@ document.getElementById("searchBox").addEventListener("input", () => {
         } else {
             clearInterval(intervaloAtualizacao); // Para após 3 execuções
         }
-    }, 2000);
+    }, 200);
 });
 
 // 🔹 Para atualização quando o usuário sai do campo de entrada
@@ -135,4 +135,9 @@ function debounce(func, delay) {
 document.getElementById("searchBox").addEventListener("input", function () {
     const termo = this.value;
     debounce(() => realizarBusca(termo), 300);
+});
+document.getElementById("searchBox").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") { // Verifica se a tecla pressionada é "Enter"
+        buscarTudo(); // Executa a busca completa
+    }
 });
