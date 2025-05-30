@@ -108,7 +108,7 @@ document.getElementById("searchBox").addEventListener("input", () => {
         } else {
             clearInterval(intervaloAtualizacao); // Para após 3 execuções
         }
-    }, 200);
+    }, 2000);
 });
 
 // 🔹 Para atualização quando o usuário sai do campo de entrada
