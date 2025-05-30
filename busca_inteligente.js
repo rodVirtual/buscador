@@ -256,7 +256,7 @@ function completaTitulos(result, vetorSKUs, buscaUsuario) {
     let pontuacoesAtuais = [];
     let skus = []
 
-    let limiteResultados = Math.min(20, result[0].length); // Limita a quantidade de resultados
+    let limiteResultados = Math.min(100, result[0].length); // Limita a quantidade de resultados
     let pontosExtras = 0;
     for (let i = 0; i < limiteResultados; i++) {
         let resultadinho = vetorSKUs[result[0][i]].split(";")
