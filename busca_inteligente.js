@@ -1,3 +1,6 @@
+function padronizar(texto) {
+    return texto.toLowerCase();
+}
 function buscaBinaria(vetor, palavra) {
     let esquerda = 0;
     let direita = vetor.length - 1;
@@ -287,8 +290,11 @@ function unirVetores(vetor1, vetor2) {
 }
 
 function buscaInteligente(BuscaUsuario, vetorPalavras, vetorSKUs) {
+    // Passo 0: Padronizar entrada
+    let BuscaPadronizada=padronizar(BuscaUsuario);
+    
     // Passo 1: Encontrar os índices das palavras na busca
-    let locaisArrays = buscaPalavras(vetorPalavras, BuscaUsuario);
+    let locaisArrays = buscaPalavras(vetorPalavras, BuscaPadronizada);
 
     // Passo 2: Extrair os códigos das palavras encontradas
     let arraysCodigos = coletarArrays(vetorPalavras, locaisArrays, 2);
@@ -302,7 +308,7 @@ function buscaInteligente(BuscaUsuario, vetorPalavras, vetorSKUs) {
     // Passo 5: Ordenar por relevância
     let resultadosOrdenados = ordenarPorPontuacao(resultados[0], resultados[1]);
     // Passo 6: Completa os titulos com as aplicações
-    let titulosProntos = completaTitulos(resultadosOrdenados, vetorSKUs, BuscaUsuario)
+    let titulosProntos = completaTitulos(resultadosOrdenados, vetorSKUs, BuscaPadronizada)
 
     return unirVetores(titulosProntos[0], titulosProntos[1])
 }
