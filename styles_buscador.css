@@ -129,7 +129,7 @@
                width: 100%;
                padding: 5px 40px 5px 10px;
                /* Espaço maior à esquerda para digitação */
-               background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat right 10px center;
+               background: url('#hpa-search') no-repeat right 10px center;
                background-size: 16px;
                /* Ajuste do tamanho da lupa */
                border-radius: 50px;
