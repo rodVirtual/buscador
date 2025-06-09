@@ -1,5 +1,5 @@
 if (typeof vetPalavras === "undefined") {
-    let vetPalavras = [...]; // Apenas cria se não existir
+    let vetPalavras = []; // Apenas cria se não existir
 }
 let vetSkus = [];
 let debounceTimeout;
