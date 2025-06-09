@@ -156,4 +156,7 @@ document.getElementById("searchBox").addEventListener("keydown", function (event
         buscarTudo();
     }
 });
-console.log(document.getElementById("searchBox"));
+
+document.getElementById("searchBox").addEventListener("input", function () {
+    console.log("O input está funcionando!");
+});
