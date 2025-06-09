@@ -156,3 +156,4 @@ document.getElementById("searchBox").addEventListener("keydown", function (event
         buscarTudo();
     }
 });
+console.log(document.getElementById("searchBox"));
