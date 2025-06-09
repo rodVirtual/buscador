@@ -1,18 +1,30 @@
+// Verificação de existência das variáveis antes de criá-las
 if (typeof vetPalavras === "undefined") {
-    let vetPalavras = []; // Apenas cria se não existir
+    var vetPalavras = [];
 }
 if (typeof vetSkus === "undefined") {
-    let vetSkus = [];
+    var vetSkus = [];
 }
 if (typeof debounceTimeout === "undefined") {
-let debounceTimeout;
+    var debounceTimeout = null;
+}
+if (typeof tempoEspera === "undefined") {
+    var tempoEspera = null;
+}
+if (typeof intervaloAtualizacao === "undefined") {
+    var intervaloAtualizacao = null;
+}
+if (typeof contadorAtualizacoes === "undefined") {
+    var contadorAtualizacoes = 0;
 }
 
+// Função para buscar arquivos CSV
 async function fetchCSV(url) {
     const response = await fetch(url);
     return response.text();
 }
 
+// Inicializa dados das palavras e SKUs
 async function initializeData() {
     const palavrasCSV = await fetchCSV("https://raw.githubusercontent.com/rodVirtual/buscador/main/palavras.csv");
     const skusCSV = await fetchCSV("https://raw.githubusercontent.com/rodVirtual/buscador/main/skus.csv");
@@ -23,6 +35,7 @@ async function initializeData() {
 
 initializeData();
 
+// Função para verificar se a imagem existe
 function verificarImagem(url) {
     return new Promise((resolve) => {
         const img = new Image();
@@ -39,11 +52,7 @@ function verificarImagem(url) {
     });
 }
 
-let tempoEspera;
-
-let intervaloAtualizacao;
-let contadorAtualizacoes = 0;
-
+// Função de busca inteligente com debounce
 async function realizarBusca(termo) {
     const suggestionsDiv = document.getElementById("suggestions");
 
@@ -55,12 +64,12 @@ async function realizarBusca(termo) {
     clearTimeout(tempoEspera);
     tempoEspera = setTimeout(async () => {
         const resultados = await buscaInteligente(termo, vetPalavras, vetSkus);
-        const fragment = document.createDocumentFragment(); // Fragmento para evitar múltiplas manipulações no DOM
+        const fragment = document.createDocumentFragment();
 
         let k = 0;
 
         for (const [sku, titulo] of resultados) {
-            if (k >= 15) break; // Mantém apenas 15 itens visíveis
+            if (k >= 15) break;
 
             const url_imagem = `https://www.virtualautopecas.com.br/image/cache/image/catalog/image_${sku}-0-44x44.png`;
             const existe = await verificarImagem(url_imagem);
@@ -81,50 +90,48 @@ async function realizarBusca(termo) {
 
                 link.appendChild(img);
                 link.appendChild(text);
-                fragment.appendChild(link); // Adiciona ao fragmento ao invés de modificar o DOM diretamente
+                fragment.appendChild(link);
             }
         }
 
-        suggestionsDiv.innerHTML = ""; // Remove o conjunto anterior antes de adicionar o novo
+        suggestionsDiv.innerHTML = "";
 
         if (k > 0) {
-            suggestionsDiv.appendChild(fragment); // Insere todos os elementos de uma vez
+            suggestionsDiv.appendChild(fragment);
             suggestionsDiv.style.display = "block";
 
             const showAll = document.createElement("div");
             showAll.classList.add("show-all");
             showAll.textContent = "Mostrar tudo";
             showAll.onclick = () => buscarTudo();
-            suggestionsDiv.appendChild(showAll); // Adiciona o botão ao fragmento
+            suggestionsDiv.appendChild(showAll);
         } else {
             suggestionsDiv.style.display = "none";
         }
     }, 250);
 }
 
-
-// 🔹 Inicia atualização automática após término da digitação (máx. 3 vezes)
+// Evento para iniciar atualização automática ao digitar
 document.getElementById("searchBox").addEventListener("input", () => {
-    contadorAtualizacoes = 0; // Reset ao digitar
+    contadorAtualizacoes = 0;
     clearInterval(intervaloAtualizacao);
     intervaloAtualizacao = setInterval(() => {
         if (contadorAtualizacoes < 1) {
             realizarBusca(document.getElementById("searchBox").value);
             contadorAtualizacoes++;
         } else {
-            clearInterval(intervaloAtualizacao); // Para após 3 execuções
+            clearInterval(intervaloAtualizacao);
         }
     }, 2000);
 });
 
-// 🔹 Para atualização quando o usuário sai do campo de entrada
+// Para atualização quando o usuário sai do campo
 document.getElementById("searchBox").addEventListener("blur", () => {
     clearInterval(intervaloAtualizacao);
-    contadorAtualizacoes = 0; // Reseta ao perder o foco
+    contadorAtualizacoes = 0;
 });
 
-
-
+// Função para buscar todos os produtos
 function buscarTudo() {
     const termo = document.getElementById("searchBox").value;
     if (!termo.trim()) return;
@@ -133,6 +140,7 @@ function buscarTudo() {
     window.location.href = `https://www.virtualautopecas.com.br/index.php?route=product/search&search=${palavrasBusca}`;
 }
 
+// Função debounce para evitar execuções excessivas
 function debounce(func, delay) {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(func, delay);
@@ -142,8 +150,9 @@ document.getElementById("searchBox").addEventListener("input", function () {
     const termo = this.value;
     debounce(() => realizarBusca(termo), 300);
 });
+
 document.getElementById("searchBox").addEventListener("keydown", function (event) {
-    if (event.key === "Enter") { // Verifica se a tecla pressionada é "Enter"
-        buscarTudo(); // Executa a busca completa
+    if (event.key === "Enter") {
+        buscarTudo();
     }
 });
