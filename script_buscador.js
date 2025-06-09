@@ -1,8 +1,12 @@
 if (typeof vetPalavras === "undefined") {
     let vetPalavras = []; // Apenas cria se não existir
 }
-let vetSkus = [];
+if (typeof vetSkus === "undefined") {
+    let vetSkus = [];
+}
+if (typeof debounceTimeout === "undefined") {
 let debounceTimeout;
+}
 
 async function fetchCSV(url) {
     const response = await fetch(url);
