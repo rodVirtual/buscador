@@ -54,7 +54,7 @@ function verificarImagem(url) {
 
 // Função de busca inteligente com debounce
 async function realizarBusca(termo) {
-    const suggestionsDiv = document.getElementById("suggestions");
+    const suggestionsDiv = document.getElementsByClassName("searchSuggestions");
 
     if (!termo.trim()) {
         suggestionsDiv.style.display = "none";
@@ -112,12 +112,12 @@ async function realizarBusca(termo) {
 }
 
 // Evento para iniciar atualização automática ao digitar
-document.getElementById("searchBox").addEventListener("input", () => {
+document.getElementsByName("searchQuery").addEventListener("input", () => {
     contadorAtualizacoes = 0;
     clearInterval(intervaloAtualizacao);
     intervaloAtualizacao = setInterval(() => {
         if (contadorAtualizacoes < 1) {
-            realizarBusca(document.getElementById("searchBox").value);
+            realizarBusca(document.getElementsByName("searchQuery").value);
             contadorAtualizacoes++;
         } else {
             clearInterval(intervaloAtualizacao);
@@ -126,14 +126,14 @@ document.getElementById("searchBox").addEventListener("input", () => {
 });
 
 // Para atualização quando o usuário sai do campo
-document.getElementById("searchBox").addEventListener("blur", () => {
+document.getElementsByName("searchQuery").addEventListener("blur", () => {
     clearInterval(intervaloAtualizacao);
     contadorAtualizacoes = 0;
 });
 
 // Função para buscar todos os produtos
 function buscarTudo() {
-    const termo = document.getElementById("searchBox").value;
+    const termo = document.getElementsByName("searchQuery").value;
     if (!termo.trim()) return;
 
     const palavrasBusca = termo.split(" ").join("%20");
@@ -146,17 +146,17 @@ function debounce(func, delay) {
     debounceTimeout = setTimeout(func, delay);
 }
 
-document.getElementById("searchBox").addEventListener("input", function () {
+document.getElementsByName("searchQuery").addEventListener("input", function () {
     const termo = this.value;
     debounce(() => realizarBusca(termo), 300);
 });
 
-document.getElementById("searchBox").addEventListener("keydown", function (event) {
+document.getElementsByName("searchQuery").addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         buscarTudo();
     }
 });
 
-document.getElementById("searchBox").addEventListener("input", function () {
+document.getElementsByName("searchQuery").addEventListener("input", function () {
     console.log("O input está funcionando!");
 });
