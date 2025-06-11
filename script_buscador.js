@@ -33,17 +33,17 @@ const verificarImagem = (url) => {
 
 // Função de busca inteligente com debounce
 const realizarBusca = async (termo) => {
-    const suggestionsDiv = document.querySelector(".searchSuggestions");
+    const $suggestionsDiv = $(".searchSuggestions");
 
     if (!termo.trim()) {
-        suggestionsDiv.style.display = "none";
+        $suggestionsDiv.hide();
         return;
     }
 
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(async () => {
         const resultados = await buscaInteligente(termo, vetPalavras, vetSkus);
-        const fragment = document.createDocumentFragment();
+        const $fragment = $(document.createDocumentFragment());
 
         let k = 0;
         for (const [sku, titulo] of resultados) {
@@ -52,72 +52,58 @@ const realizarBusca = async (termo) => {
             const urlImagem = `https://www.virtualautopecas.com.br/image/cache/image/catalog/image_${sku}-0-44x44.png`;
             if (await verificarImagem(urlImagem)) {
                 k++;
-                const link = document.createElement("a");
-                link.classList.add("suggestion-item");
-                link.href = `https://www.virtualautopecas.com.br/index.php?route=product/product&product_id=${sku}&search=${titulo.replace(/\s/g, "+")}`;
-                link.target = "_blank";
+                const $link = $("<a>").addClass("suggestion-item").attr({
+                    href: `https://www.virtualautopecas.com.br/index.php?route=product/product&product_id=${sku}&search=${titulo.replace(/\s/g, "+")}`,
+                    target: "_blank"
+                });
 
-                const img = document.createElement("img");
-                img.src = urlImagem;
+                const $img = $("<img>").attr("src", urlImagem);
+                const $text = $("<span>").addClass("suggestion-text").text(titulo);
 
-                const text = document.createElement("span");
-                text.classList.add("suggestion-text");
-                text.textContent = titulo;
-
-                link.append(img, text);
-                fragment.appendChild(link);
+                $link.append($img, $text);
+                $fragment.append($link);
             }
         }
 
-        suggestionsDiv.innerHTML = "";
+        $suggestionsDiv.empty();
         if (k > 0) {
-            suggestionsDiv.appendChild(fragment);
-            suggestionsDiv.style.display = "block";
+            $suggestionsDiv.append($fragment).show();
 
-            const showAll = document.createElement("div");
-            showAll.classList.add("show-all");
-            showAll.textContent = "Mostrar tudo";
-            showAll.onclick = buscarTudo;
-            suggestionsDiv.appendChild(showAll);
+            const $showAll = $("<div>").addClass("show-all").text("Mostrar tudo").on("click", buscarTudo);
+            $suggestionsDiv.append($showAll);
         } else {
-            suggestionsDiv.style.display = "none";
+            $suggestionsDiv.hide();
         }
     }, 250);
 };
 
-// Adicionando eventos ao campo de pesquisa
-const searchQuery = document.querySelector("[name='searchQuery']");
-if (searchQuery) {
-    searchQuery.addEventListener("input", () => {
+// Eventos ao campo de pesquisa
+const $searchQuery = $("[name='searchQuery']");
+if ($searchQuery.length) {
+    $searchQuery.on("input", () => {
         contadorAtualizacoes = 0;
         clearInterval(intervaloAtualizacao);
         intervaloAtualizacao = setInterval(() => {
             if (contadorAtualizacoes < 1) {
-                realizarBusca(searchQuery.value);
+                realizarBusca($searchQuery.val());
                 contadorAtualizacoes++;
             } else {
                 clearInterval(intervaloAtualizacao);
             }
         }, 2000);
-    });
-
-    searchQuery.addEventListener("blur", () => {
+    }).on("blur", () => {
         clearInterval(intervaloAtualizacao);
         contadorAtualizacoes = 0;
-    });
-
-    searchQuery.addEventListener("keydown", (event) => {
+    }).on("keydown", (event) => {
         if (event.key === "Enter") buscarTudo();
-    });
-
-    searchQuery.addEventListener("input", () => {
-        debounce(() => realizarBusca(searchQuery.value), 300);
+    }).on("input", () => {
+        debounce(() => realizarBusca($searchQuery.val()), 300);
     });
 }
 
-// Função para buscar todos os produtos
+// Buscar todos os produtos
 const buscarTudo = () => {
-    const termo = searchQuery.value.trim();
+    const termo = $searchQuery.val().trim();
     if (!termo) return;
     window.location.href = `https://www.virtualautopecas.com.br/index.php?route=product/search&search=${encodeURIComponent(termo)}`;
 };
