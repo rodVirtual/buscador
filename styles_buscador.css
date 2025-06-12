@@ -2,7 +2,6 @@
            display: flex;
            align-items: center;
            width: 50vw;
-           border: 1px solid transparent;
            border-radius: 3px;
            overflow: hidden;
        }
