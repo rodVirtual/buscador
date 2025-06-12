@@ -2,7 +2,7 @@
            display: flex;
            align-items: center;
            width: 50vw;
-           border: 1px solid #eeeeee;
+           border: 1px solid transparent;
            border-radius: 3px;
            overflow: hidden;
        }
@@ -20,7 +20,6 @@
        #searchButton {
            background: #dadada;
            border: none;
-           padding: 10px 15px;
            cursor: pointer;
            border-radius: 0 3px 3px 0;
            display: flex;
