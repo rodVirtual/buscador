@@ -18,6 +18,8 @@
 
        #searchButton {
            background: #dadada;
+           width: 30px;
+           height: 100%
            border: none;
            cursor: pointer;
            border-radius: 0 3px 3px 0;
