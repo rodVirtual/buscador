@@ -37,7 +37,7 @@
        .searchSuggestions {
               top: 100%;
               left: 0;
-              width: 100%;
+              width: 70vw;
               border: 1px solid #ccc;
               background: white;
               position: absolute;
@@ -106,7 +106,7 @@
 
            /* Ajusta o container da busca */
            #searchContainer {
-               width: 85vw;
+               width: 70vw;
                /* Ocupa quase toda a largura da tela */
                max-width: 500px;
                border-radius: 50px;
