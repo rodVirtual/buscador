@@ -34,7 +34,7 @@
            filter: brightness(0) saturate(100%) invert(45%) sepia(1%) saturate(20%) hue-rotate(0deg);
        }
 
-       #suggestions {
+       .searchSuggestions {
               top: 100%;
               left: 0;
               width: 100%;
