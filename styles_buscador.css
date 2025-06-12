@@ -77,6 +77,7 @@
        }
 
        .suggestion-text {
+           color: black;
            flex-grow: 1;
            font-family: sans-serif;
            font-size: 16px;
